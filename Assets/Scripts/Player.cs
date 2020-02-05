@@ -33,12 +33,14 @@ public class Player : MonoBehaviour
     private float saveSpeed;
     private float delaySeconds;
     private bool acceleratorTime;
+    private bool gameVictory;
 
     //public Rigidbody rb;
     // Start is called before the first frame update
     private void Start()
     {
         // rb = GetComponent<Rigidbody>();
+        gameVictory = false;
         scoreText.text = "0";
         saveSpeed = speed;
         acceleratorTime = false;
@@ -66,13 +68,18 @@ public class Player : MonoBehaviour
         {
             rb.AddForce(-sideSpeed * UnityEngine.Time.deltaTime, 0, 0, ForceMode.Impulse);
         }
+        
         if (Input.GetKey("d"))
         {
             rb.AddForce(sideSpeed * UnityEngine.Time.deltaTime, 0, 0, ForceMode.Impulse);
         }
-        if (transform.position.y < 0)
+        
+        if (gameVictory == false)
+        {
+            if (transform.position.y < 0)
             {
                 gameManager.GameOver(coins);
+            }
         }
 
     }
@@ -97,6 +104,11 @@ public class Player : MonoBehaviour
             acceleratorTime = true;  // включено ускорение на время из-за столкновения с Accelerator
             delaySeconds = acceleratorDelaySeconds;
             Destroy(other.gameObject);
+        }
+        if (other.tag == "FinishCube")
+        {
+            gameManager.GameVictory(coins);
+            gameVictory = true;
         }
         scoreText.text = coins.ToString();
     }
